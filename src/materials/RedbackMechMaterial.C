@@ -688,11 +688,8 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
                                Real & p_y,
                                Real & q_y)
 {
-  RankTwoTensor dpn;
-  RankTwoTensor flow_tensor;
   RankTwoTensor ddsig;
   RankFourTensor dr_dsig, dr_dsig_inv;
-  Real flow_incr;
   Real p, q;
 
   const Real tol1 = 1e-10; // TODO: expose to user interface and/or make the tolerance relative
@@ -725,6 +722,7 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
   unsigned int iterisohard = 0;
   const unsigned int maxiterisohard = 20, maxiter = 50;
   RankTwoTensor sig_new;
+  RankTwoTensor dpn;
   while (err3 > tol3 && iterisohard < maxiterisohard) // Hardness update iteration
   {
     iterisohard++;
@@ -741,9 +739,12 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
 
     // TODO: checking whether in plasticity
 
-    flow_incr = getFlowIncrement(q, p, q_y, p_y, yield_stress);
+    Real flow_incr = getFlowIncrement(q, p, q_y, p_y, yield_stress);
+
+    RankTwoTensor flow_tensor;
     getFlowTensor(sig_new, q, p, yield_stress, flow_tensor);
     flow_tensor *= flow_incr;
+
     RankTwoTensor resid = flow_tensor - delta_dp;
     Real err1 = resid.L2norm();
     // TODO: do not compute flow tensor if in elasticity
