@@ -465,9 +465,6 @@ RedbackMechMaterial::macaulayBracket(Real val)
 void
 RedbackMechMaterial::computeRedbackTerms(RankTwoTensor & sig, Real q_y, Real p_y)
 {
-  Real delta_phi_mech_el, delta_phi_mech_pl; // elastic and plastic
-                                             // delta_porosity components for
-                                             // that step
   Real def_grad, def_grad_old, def_grad_rate;
   // update velocities
   //_solid_velocity[_qp] = RealVectorValue(_dispx_dot[_qp], _dispy_dot[_qp],
@@ -500,15 +497,13 @@ RedbackMechMaterial::computeRedbackTerms(RankTwoTensor & sig, Real q_y, Real p_y
   // Update mechanical porosity (elastic and plastic components)
   // TODO: set T0 properly (once only, at the very beginning). Until then, T = T
   // - T0, P = P - P0
-  delta_phi_mech_el =
+  Real delta_phi_mech_el =
     (1.0 - _total_porosity[ _qp ]) * (_solid_compressibility[ _qp ] * (_pore_pres[ _qp ] - _P0_param) -
                                       _solid_thermal_expansion[ _qp ] * (_T[ _qp ] - _T0_param) +
                                       (_elastic_strain[ _qp ] - _elastic_strain_old[ _qp ]).trace());
-  delta_phi_mech_pl = (1.0 - _total_porosity[ _qp ]) * (_plastic_strain[ _qp ] - _plastic_strain_old[ _qp ]).trace();
+  Real delta_phi_mech_pl = (1.0 - _total_porosity[ _qp ]) * (_plastic_strain[ _qp ] - _plastic_strain_old[ _qp ]).trace();
 
   _mechanical_porosity[ _qp ] = delta_phi_mech_el + delta_phi_mech_pl;
-
-  Real gruntfest_number;
 
   if (_has_D)
   {
@@ -535,7 +530,7 @@ RedbackMechMaterial::computeRedbackTerms(RankTwoTensor & sig, Real q_y, Real p_y
     form_damage_kernels(q_y);
   }
 
-  gruntfest_number = _gr[ _qp ] * std::exp(_ar[ _qp ]);
+  Real gruntfest_number = _gr[ _qp ] * std::exp(_ar[ _qp ]);
 
   // Compute Mechanical Dissipation.
   _mechanical_dissipation_mech[ _qp ] = gruntfest_number * sig.doubleContraction(instantaneous_strain_rate) +
