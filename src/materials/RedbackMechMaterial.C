@@ -688,8 +688,6 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
                                Real & p_y,
                                Real & q_y)
 {
-  RankTwoTensor ddsig;
-  RankFourTensor dr_dsig, dr_dsig_inv;
   Real p, q;
 
   const Real tol1 = 1e-10; // TODO: expose to user interface and/or make the tolerance relative
@@ -754,9 +752,10 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
       iter++;
 
       // Jacobian = d(residual)/d(sigma)
+      RankFourTensor dr_dsig;
       getJac(sig_new, E_ijkl, flow_incr, q, p, p_y, q_y, yield_stress, dr_dsig);
-      dr_dsig_inv = dr_dsig.invSymm();
-      ddsig = -dr_dsig_inv * resid;         // Newton Raphson
+      RankFourTensor dr_dsig_inv = dr_dsig.invSymm();
+      RankTwoTensor ddsig = -dr_dsig_inv * resid; // Newton Raphson
       delta_dp -= E_ijkl.invSymm() * ddsig; // Update increment of plastic rate of deformation tensor
       sig_new += ddsig;                     // Update stress
 
