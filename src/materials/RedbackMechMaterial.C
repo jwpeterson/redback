@@ -874,15 +874,12 @@ RedbackMechMaterial::form_damage_kernels(Real cohesion)
 void
 RedbackMechMaterial::formBrittleDamage()
 {
-  Real plastic_damage, healing_damage;
-  Real kachanov, exponent_kachanov;
-
   // Kachanov's original law of Brittle Damage
-  exponent_kachanov = 1;
-  kachanov = _mises_stress[ _qp ] / (1 - _damage[ _qp ]);
+  Real exponent_kachanov = 1;
+  Real kachanov = _mises_stress[ _qp ] / (1 - _damage[ _qp ]);
 
-  plastic_damage = _damage_coeff * std::pow(kachanov, exponent_kachanov);
-  healing_damage = 0;
+  Real plastic_damage = _damage_coeff * std::pow(kachanov, exponent_kachanov);
+  Real healing_damage = 0;
 
   Real mises_stress_old = getSigEqv(_stress_old[ _qp ]);
   if (mises_stress_old > _mises_stress[ _qp ])
@@ -898,17 +895,15 @@ RedbackMechMaterial::formBrittleDamage()
 void
 RedbackMechMaterial::formCreepDamage(Real cohesion)
 {
-  Real plastic_damage, healing_damage;
-  Real lambda_dot;
-  Real d_yield_dq; // The derivative of the yield surface with respect to the
-                   // deviatoric stress q
-
+  // The derivative of the yield surface with respect to the
+  // deviatoric stress q.
   // Damage evolution law for creep damage
   // J2 plastic potential with evolving cohesion for the damage evolution law
   // (remember that cohesion is q_y which is updated as q_y * (1-D) in the
   // get_py_qy_damaged function)
-  d_yield_dq = 1 / std::pow(cohesion, 2);
+  Real d_yield_dq = 1 / std::pow(cohesion, 2);
 
+  Real lambda_dot = 0.;
   if (d_yield_dq > 0) // ensuring positiveness of the plastic multiplier
   {
     /* the plastic multiplier could be having this form:
@@ -917,11 +912,9 @@ RedbackMechMaterial::formCreepDamage(Real cohesion)
      * going with a much simpler form: */
     lambda_dot = _mises_strain_rate[ _qp ] / d_yield_dq;
   }
-  else
-    lambda_dot = 0;
 
-  plastic_damage = _damage_coeff * lambda_dot;
-  healing_damage = 0;
+  Real plastic_damage = _damage_coeff * lambda_dot;
+  Real healing_damage = 0;
   _damage_kernel[ _qp ] = plastic_damage + healing_damage;
   _damage_kernel_jac[ _qp ] = 0;
 }
