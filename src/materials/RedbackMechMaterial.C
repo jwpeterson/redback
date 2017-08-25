@@ -694,17 +694,14 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
   RankFourTensor dr_dsig, dr_dsig_inv;
   Real flow_incr;
   Real p, q;
-  Real err1, err3, tol1, tol3;
-  unsigned int iterisohard, iter, maxiterisohard = 20, maxiter = 50;
   Real eqvpstrain, mean_stress_old;
   // Real volumetric_plastic_strain;
   Real yield_stress, yield_stress_prev;
 
-  tol1 = 1e-10; // TODO: expose to user interface and/or make the tolerance
-                // relative
-  tol3 = 1e-6;  // TODO: expose to user interface and/or make the tolerance relative
-  err3 = 1.1 * tol3;
-  iterisohard = 0;
+  const Real tol1 = 1e-10; // TODO: expose to user interface and/or make the tolerance
+                           // relative
+  const Real tol3 = 1e-6;  // TODO: expose to user interface and/or make the tolerance relative
+  Real err3 = 1.1 * tol3;
 
   // volumetric_plastic_strain = dp.trace();
   mean_stress_old = sig_old.trace() / 3.0;
@@ -731,10 +728,12 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
                                          _pore_pres[ _qp ] * _alpha_2[ _qp ] *
                                            (1 + _alpha_3[ _qp ] * std::log(_confining_pressure[ _qp ])));
 
+  unsigned int iterisohard = 0;
+  const unsigned int maxiterisohard = 20, maxiter = 50;
   while (err3 > tol3 && iterisohard < maxiterisohard) // Hardness update iteration
   {
     iterisohard++;
-    iter = 0;
+    unsigned int iter = 0;
     delta_dp.zero();
 
     // Elastic guess
@@ -751,7 +750,7 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
     getFlowTensor(sig_new, q, p, yield_stress, flow_tensor);
     flow_tensor *= flow_incr;
     resid = flow_tensor - delta_dp;
-    err1 = resid.L2norm();
+    Real err1 = resid.L2norm();
     // TODO: do not compute flow tensor if in elasticity
 
     while (err1 > tol1 && iter < maxiter) // Stress update iteration (hardness fixed)
