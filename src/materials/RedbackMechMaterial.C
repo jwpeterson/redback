@@ -694,17 +694,13 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
   RankFourTensor dr_dsig, dr_dsig_inv;
   Real flow_incr;
   Real p, q;
-  Real eqvpstrain, mean_stress_old;
-  Real yield_stress, yield_stress_prev;
 
-  const Real tol1 = 1e-10; // TODO: expose to user interface and/or make the tolerance
-                           // relative
+  const Real tol1 = 1e-10; // TODO: expose to user interface and/or make the tolerance relative
   const Real tol3 = 1e-6;  // TODO: expose to user interface and/or make the tolerance relative
   Real err3 = 1.1 * tol3;
 
-  mean_stress_old = sig_old.trace() / 3.0;
-  eqvpstrain = std::pow(2.0 / 3.0, 0.5) * dp.L2norm();
-  yield_stress = getYieldStress(eqvpstrain);
+  Real eqvpstrain = std::pow(2.0 / 3.0, 0.5) * dp.L2norm();
+  Real yield_stress = getYieldStress(eqvpstrain);
 
   // calculate the term _exponential = -Q_{mech}/(RT) with Q_{mech} = E_0 + p'c
   // V_{ref} + p_f V_{act}
@@ -784,7 +780,7 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
 
     dpn = dp + delta_dp;
     eqvpstrain = std::pow(2.0 / 3.0, 0.5) * dpn.L2norm();
-    yield_stress_prev = yield_stress;
+    Real yield_stress_prev = yield_stress;
     yield_stress = getYieldStress(eqvpstrain);
     err3 = std::abs(yield_stress - yield_stress_prev);
   }
