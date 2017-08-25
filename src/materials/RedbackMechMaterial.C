@@ -690,12 +690,11 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
 {
   RankTwoTensor sig_new, delta_dp, dpn;
   RankTwoTensor flow_tensor;
-  RankTwoTensor resid, ddsig;
+  RankTwoTensor ddsig;
   RankFourTensor dr_dsig, dr_dsig_inv;
   Real flow_incr;
   Real p, q;
   Real eqvpstrain, mean_stress_old;
-  // Real volumetric_plastic_strain;
   Real yield_stress, yield_stress_prev;
 
   const Real tol1 = 1e-10; // TODO: expose to user interface and/or make the tolerance
@@ -703,7 +702,6 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
   const Real tol3 = 1e-6;  // TODO: expose to user interface and/or make the tolerance relative
   Real err3 = 1.1 * tol3;
 
-  // volumetric_plastic_strain = dp.trace();
   mean_stress_old = sig_old.trace() / 3.0;
   eqvpstrain = std::pow(2.0 / 3.0, 0.5) * dp.L2norm();
   yield_stress = getYieldStress(eqvpstrain);
@@ -749,7 +747,7 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
     flow_incr = getFlowIncrement(q, p, q_y, p_y, yield_stress);
     getFlowTensor(sig_new, q, p, yield_stress, flow_tensor);
     flow_tensor *= flow_incr;
-    resid = flow_tensor - delta_dp;
+    RankTwoTensor resid = flow_tensor - delta_dp;
     Real err1 = resid.L2norm();
     // TODO: do not compute flow tensor if in elasticity
 
