@@ -296,13 +296,11 @@ void
 RedbackMechMaterial::computeStrain()
 {
   // Method from Rashid, 1993
-  std::vector<RankTwoTensor> Fhat;
-  Fhat.resize(_qrule->n_points());
+  std::vector<RankTwoTensor> Fhat(_qrule->n_points());
   RankTwoTensor ave_Fhat;
-  Real volume(0);
-  Real ave_dfgrd_det;
+  Real volume = 0;
+  Real ave_dfgrd_det = 0.0;
 
-  ave_dfgrd_det = 0.0;
   for (_qp = 0; _qp < _qrule->n_points(); ++_qp)
   {
     // Deformation gradient
