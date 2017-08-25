@@ -434,7 +434,7 @@
 [Executioner]
   # Preconditioned JFNK (default)
   start_time = 0.0
-  num_steps = 1
+  num_steps = 2
   # end_time = 2e-2
   dtmax = 1
   dtmin = 1e-7

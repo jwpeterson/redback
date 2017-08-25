@@ -365,8 +365,8 @@ RedbackMechMaterial::computeQpStress()
   _strain_increment[_qp].print();
   Moose::out << "_elasticity_tensor[" << _qp << "] = \n";
   _elasticity_tensor[_qp].print();
-  Moose::out << "sig = \n";
-  sig.print();
+  // Moose::out << "sig = \n";
+  // sig.print();
 
   returnMap(_stress_old[ _qp ], _strain_increment[ _qp ], _elasticity_tensor[ _qp ], dp, sig, p_y, q_y);
   _stress[ _qp ] = sig;
