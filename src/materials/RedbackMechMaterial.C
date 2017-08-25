@@ -688,8 +688,6 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
                                Real & p_y,
                                Real & q_y)
 {
-  Real p, q;
-
   const Real tol1 = 1e-10; // TODO: expose to user interface and/or make the tolerance relative
   const Real tol3 = 1e-6;  // TODO: expose to user interface and/or make the tolerance relative
   Real err3 = 1.1 * tol3;
@@ -731,8 +729,8 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
     sig_new = sig_old + E_ijkl * delta_d;
     // Compute distance to current yield surface (line), only valid for
     // associative potential
-    p = sig_new.trace() / 3.0;
-    q = getSigEqv(sig_new);
+    Real p = sig_new.trace() / 3.0;
+    Real q = getSigEqv(sig_new);
     get_py_qy_damaged(p, q, p_y, q_y, yield_stress);
 
     // TODO: checking whether in plasticity
