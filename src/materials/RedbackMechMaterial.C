@@ -359,6 +359,15 @@ RedbackMechMaterial::computeQpStress()
   _returnmap_iter[ _qp ] = 0;
   RankTwoTensor sig;
   Real p_y = 0, q_y = 0; // volumetric (p) and deviatoric (q) projections of yield stress
+  Moose::out << "_stress_old[" << _qp << "] = \n";
+  _stress_old[_qp].print();
+  Moose::out << "_strain_increment[" << _qp << "] = \n";
+  _strain_increment[_qp].print();
+  Moose::out << "_elasticity_tensor[" << _qp << "] = \n";
+  _elasticity_tensor[_qp].print();
+  Moose::out << "sig = \n";
+  sig.print();
+
   returnMap(_stress_old[ _qp ], _strain_increment[ _qp ], _elasticity_tensor[ _qp ], dp, sig, p_y, q_y);
   _stress[ _qp ] = sig;
 

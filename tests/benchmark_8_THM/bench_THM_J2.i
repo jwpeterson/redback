@@ -434,7 +434,8 @@
 [Executioner]
   # Preconditioned JFNK (default)
   start_time = 0.0
-  end_time = 2e-2
+  num_steps = 1
+  # end_time = 2e-2
   dtmax = 1
   dtmin = 1e-7
   type = Transient
