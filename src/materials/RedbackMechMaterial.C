@@ -359,12 +359,12 @@ RedbackMechMaterial::computeQpStress()
   _returnmap_iter[ _qp ] = 0;
   RankTwoTensor sig;
   Real p_y = 0, q_y = 0; // volumetric (p) and deviatoric (q) projections of yield stress
-  Moose::out << "_stress_old[" << _qp << "] = \n";
-  _stress_old[_qp].print();
-  Moose::out << "_strain_increment[" << _qp << "] = \n";
-  _strain_increment[_qp].print();
-  Moose::out << "_elasticity_tensor[" << _qp << "] = \n";
-  _elasticity_tensor[_qp].print();
+  // Moose::out << "_stress_old[" << _qp << "] = \n";
+  // _stress_old[_qp].print();
+  // Moose::out << "_strain_increment[" << _qp << "] = \n";
+  // _strain_increment[_qp].print();
+  // Moose::out << "_elasticity_tensor[" << _qp << "] = \n";
+  // _elasticity_tensor[_qp].print();
   // Moose::out << "sig = \n";
   // sig.print();
 
@@ -725,9 +725,18 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
 
     // Elastic guess
     sig_new = sig_old + E_ijkl * delta_d;
+    Moose::out << "sig_old=\n";
+    sig_old.print();
+    Moose::out << "E_ijkl=\n";
+    E_ijkl.print();
+    Moose::out << "delta_d=\n";
+    delta_d.print();
+
     // Compute distance to current yield surface (line), only valid for
     // associative potential
     Real p = sig_new.trace() / 3.0;
+    // Moose::out << "sig_new=\n";
+    // sig_new.print();
     Real q = getSigEqv(sig_new);
     get_py_qy_damaged(p, q, p_y, q_y, yield_stress);
 
