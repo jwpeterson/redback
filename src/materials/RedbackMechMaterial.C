@@ -353,15 +353,14 @@ RedbackMechMaterial::computeQpStrain()
 void
 RedbackMechMaterial::computeQpStress()
 {
-  RankTwoTensor dp, sig;
-  Real p_y = 0, q_y = 0; // volumetric (p) and deviatoric (q) projections of yield stress
-
   // Obtain previous plastic rate of deformation tensor
-  dp = _plastic_strain_old[ _qp ];
+  RankTwoTensor dp = _plastic_strain_old[ _qp ];
 
   // Solve J2 plastic constitutive equations based on current strain increment
   // Returns current  stress and plastic rate of deformation tensor
   _returnmap_iter[ _qp ] = 0;
+  RankTwoTensor sig;
+  Real p_y = 0, q_y = 0; // volumetric (p) and deviatoric (q) projections of yield stress
   returnMap(_stress_old[ _qp ], _strain_increment[ _qp ], _elasticity_tensor[ _qp ], dp, sig, p_y, q_y);
   _stress[ _qp ] = sig;
 
@@ -421,9 +420,7 @@ RedbackMechMaterial::deltaFunc(const unsigned int i, const unsigned int j)
 Real
 RedbackMechMaterial::getYieldStress(const Real eqpe)
 {
-  unsigned nsize;
-
-  nsize = _yield_stress_vector.size();
+  unsigned int nsize = _yield_stress_vector.size();
 
   if (_yield_stress_vector[ 0 ] > 0.0 || nsize % 2 > 0) // Error check for input inconsitency
     mooseError("Error in yield stress input: Should be a vector with eqv "
