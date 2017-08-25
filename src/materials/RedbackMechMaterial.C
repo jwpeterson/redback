@@ -688,7 +688,7 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
                                Real & p_y,
                                Real & q_y)
 {
-  RankTwoTensor sig_new, delta_dp, dpn;
+  RankTwoTensor dpn;
   RankTwoTensor flow_tensor;
   RankTwoTensor ddsig;
   RankFourTensor dr_dsig, dr_dsig_inv;
@@ -724,11 +724,12 @@ RedbackMechMaterial::returnMap(const RankTwoTensor & sig_old,
 
   unsigned int iterisohard = 0;
   const unsigned int maxiterisohard = 20, maxiter = 50;
+  RankTwoTensor sig_new;
   while (err3 > tol3 && iterisohard < maxiterisohard) // Hardness update iteration
   {
     iterisohard++;
     unsigned int iter = 0;
-    delta_dp.zero();
+    RankTwoTensor delta_dp;
 
     // Elastic guess
     sig_new = sig_old + E_ijkl * delta_d;
